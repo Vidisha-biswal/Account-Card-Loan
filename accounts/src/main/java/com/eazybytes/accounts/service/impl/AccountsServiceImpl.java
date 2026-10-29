@@ -59,5 +59,36 @@ public class AccountsServiceImpl implements iAccountsService {
         customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(account,new AccountsDto()));
         return customerDto;
     }
+    @Override
+    public boolean updateAccount(CustomerDto customerDto) {
+        boolean isUpdated=false;
+        AccountsDto accountsDto=customerDto.getAccountsDto();
+        if(accountsDto!=null){
+            Accounts account=accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
+                ()-> new ResourceNotFoundException("Account","Account Number",accountsDto.getAccountNumber().toString())
+            );
+            AccountsMapper.mapToAccounts(accountsDto, account);
+            account=accountsRepository.save(account);
+
+            Long customerId=account.getCustomerId();
+            Customer customer=customerRepository.findById(customerId).orElseThrow(
+                ()-> new ResourceNotFoundException("Customer","Customer ID",customerId.toString())
+            );
+            CustomerMapper.mapToCustomer(customerDto, customer);
+            customer=customerRepository.save(customer);
+            isUpdated=true;
+        }
+        return isUpdated;
+    }
+    @Override
+    public boolean deleteAccount(String mobileNumber) {
+        Customer customer=customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+            ()-> new ResourceNotFoundException("Customer", "Mobile Number", mobileNumber)
+        );
+        Long customerId=customer.getCustomerId();
+        accountsRepository.deleteByCustomerId(customerId);
+        customerRepository.deleteById(customerId);
+        return true;
+    }
 }
 
