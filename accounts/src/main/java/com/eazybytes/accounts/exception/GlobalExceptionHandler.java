@@ -53,7 +53,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+    protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String,String> validationErrors=new HashMap<>();
         List<ObjectError> validationErrorList=ex.getBindingResult().getAllErrors();
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
             String validationMsg=error.getDefaultMessage();
             validationErrors.put(fieldName, validationMsg);
         });
-        return ResponseEntity<>(validationErrors,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(validationErrors,HttpStatus.BAD_REQUEST);
     }
     
 }
