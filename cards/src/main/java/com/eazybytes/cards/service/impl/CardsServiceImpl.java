@@ -42,8 +42,11 @@ public class CardsServiceImpl implements iCardsService {
 
     @Override
     public boolean deleteCard(String mobileNumber) {
-        // TODO Auto-generated method stub
-        return false;
+        Cards cards=cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
+            ()-> new ResourceNotFoundException("Card", "mobileNumber", mobileNumber)
+        );
+        cardsRepository.delete(cards);
+        return true;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class CardsServiceImpl implements iCardsService {
 
     @Override
     public boolean updateCard(CardsDto cardDto) { 
-        Cards cards = cardsRepository.findByCardNumber(cardDto.getCardNumber()).orElseThrow(
+        Cards cards = cardsRepository.findByCardNumber(Long.valueOf(cardDto.getCardNumber())).orElseThrow(
                 () -> new ResourceNotFoundException("Card", "CardNumber", cardDto.getCardNumber()));
         CardsMapper.mapToCards(cardDto, cards);
         cardsRepository.save(cards);

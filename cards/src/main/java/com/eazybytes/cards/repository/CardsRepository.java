@@ -10,5 +10,5 @@ import com.eazybytes.cards.entity.Cards;
 @Repository
 public interface CardsRepository extends JpaRepository<Cards, Long> {
     Optional<Cards> findByMobileNumber(String mobileNumber); 
-    Cards findByCardNumber(String cardNumber);
+    Optional<Cards> findByCardNumber(Long cardNumber);
 }
